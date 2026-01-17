@@ -1,13 +1,6 @@
 <template>
-    <div>
+    <h1 class="font-[var(--font-myfont)] text-2xl font-bold">
+  Halo Tailwind
+</h1>
 
-    </div>
 </template>
-
-<script>
-   
-</script>
-
-<style scoped>
-
-</style>

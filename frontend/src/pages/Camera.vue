@@ -47,9 +47,10 @@ async function startCapture() {
 
   // 6️⃣ ke frame
   router.push({
-    name: 'frame',
-    state: { photos: photos.value }
-  })
+  name: 'frame',
+  state: { photos: photos.value }
+})
+
 }
 
 function runCountdown(seconds) {
