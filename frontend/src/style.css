@@ -1,5 +1,5 @@
 @import "tailwindcss";
-
+/* 
 @font-face {
   font-family: "Anaktoria"; 
   src: url("./assets/fonts/Anaktoria_hint.woff") format("woff");
@@ -10,4 +10,4 @@
 
 @theme {
     --default-font-family: "Anaktoria"
-}
+} */
