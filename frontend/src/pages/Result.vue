@@ -3,7 +3,7 @@
         Email
     </div>
 </template>
-<script type="module">
+<script setup>
    
 </script>
 

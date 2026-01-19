@@ -1,11 +1,17 @@
 <template>
     <div>
-        Home
+        {{ session.step }}
+        halo
+        {{ session.isOffline }}
     </div>
 </template>
 
-<script type="module">
-   
+<script setup>
+   import { useSessionStore } from '../stores/sessionStore';
+   import { usePhotoStore } from '../stores/photoStore';
+
+   const session = useSessionStore()
+
 </script>
 
 <style scoped>
