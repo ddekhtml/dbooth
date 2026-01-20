@@ -3,14 +3,10 @@ import { defineStore } from 'pinia'
 export const usePhotoStore = defineStore('photo', {
   state: () => ({
     selectedFrame: null,
-    // {id, image, photoCount}
     rawPhotos: [], 
-    selectedFilter: {
-    id: 'normal',
-    name: 'Normal',
-    css: ''
-  },
-    finalPhoto: [] 
+    selectedFilter: 'normal',
+    finalPhoto: [] , 
+    filteredPhoto: []
   }),
 
   actions: {
@@ -37,6 +33,10 @@ export const usePhotoStore = defineStore('photo', {
       this.rawPhotos = []
       this.selectedFilter = null
       this.finalPhoto = null
+      this.filteredPhoto = []
+    }, 
+    setFilteredPhotos(photo) {
+      this.filteredPhoto = photo
     }
   }
 })

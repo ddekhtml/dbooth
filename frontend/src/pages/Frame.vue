@@ -17,7 +17,7 @@ function selectFrame(frame) {
 
 <template>
   <div>
-    <h1>FRAME SELECT (DEBUG MODE)</h1>
+    <h1>FRAME SELECT</h1>
 
     <h2>Available Frames (Config)</h2>
 
