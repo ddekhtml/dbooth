@@ -57,19 +57,34 @@ function runCountdown() {
     }, 1000)
   })
 }
+
+const activeSlot = computed(() =>
+  photoStore.selectedFrame?.slots?.[0]
+)
+
+const aspectRatio = computed(() => {
+  if (!activeSlot.value) return '1 / 1'
+  return `${activeSlot.value.width} / ${activeSlot.value.height}`
+})
+
+
 </script>
 
 <template>
   <div class="p-6 space-y-6">
 
     <h1>CAMERA</h1>
-    <div class="relative mx-auto" style="width: 80vw;">
-      <video
-        ref="videoRef"
-        autoplay
-        playsinline
-        class="w-full rounded-xl bg-black"
-      />
+    <div
+    class="relative mx-auto overflow-hidden rounded-xl bg-black"
+    style="width: 80vw"
+    :style="{ aspectRatio }"
+  >
+    <video
+      ref="videoRef"
+      autoplay
+      playsinline
+      class="w-full h-full object-cover scale-[1.05]"
+    />
       <Countdown :value="countdown" />
     </div>
     <button v-if="!isCapturing"
