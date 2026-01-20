@@ -6,7 +6,7 @@ export const usePhotoStore = defineStore('photo', {
     // {id, image, photoCount}
     rawPhotos: [], 
     selectedFilter: null,
-    finalPhoto: null 
+    finalPhoto: [] 
   }),
 
   actions: {
