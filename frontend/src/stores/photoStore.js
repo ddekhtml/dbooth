@@ -5,7 +5,11 @@ export const usePhotoStore = defineStore('photo', {
     selectedFrame: null,
     // {id, image, photoCount}
     rawPhotos: [], 
-    selectedFilter: null,
+    selectedFilter: {
+    id: 'normal',
+    name: 'Normal',
+    css: ''
+  },
     finalPhoto: [] 
   }),
 
