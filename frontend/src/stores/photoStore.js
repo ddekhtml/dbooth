@@ -5,8 +5,8 @@ export const usePhotoStore = defineStore('photo', {
     selectedFrame: null,
     rawPhotos: [], 
     selectedFilter: 'normal',
-    finalPhoto: [] , 
-    filteredPhoto: []
+    finalPhoto: null , 
+    filteredPhoto: [], 
   }),
 
   actions: {
@@ -37,6 +37,9 @@ export const usePhotoStore = defineStore('photo', {
     }, 
     setFilteredPhotos(photo) {
       this.filteredPhoto = photo
+    }, 
+    resetRawPhotos(){
+      this.rawPhotos=[]
     }
   }
 })

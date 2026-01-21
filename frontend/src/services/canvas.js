@@ -6,7 +6,7 @@ export function createCanvas(width, height) {
   canvas = document.createElement('canvas')
   canvas.width = width
   canvas.height = height
-  ctx = canvas.getContext('2d')
+  ctx = canvas.getContext('2d') // ambil alat gambar 2d
   return canvas
 }
 
@@ -20,7 +20,7 @@ export async function drawFrame(frameImage) {
 export async function drawPhoto(photo, slot) {
   const img = new Image()
   img.src = photo
-  await img.decode()
+  await img.decode() // biar browser benar-benar menunggu di load 
   ctx.drawImage(
     img,
     slot.x,
@@ -30,8 +30,8 @@ export async function drawPhoto(photo, slot) {
   )
 }
 
-export function exportCanvas() {
-  return canvas.toDataURL('image/png')
+export function exportCanvas(type = 'image/png', quality = 0.92) {
+  return canvas.toDataURL(type, quality)
 }
 
 export function destroyCanvas() {

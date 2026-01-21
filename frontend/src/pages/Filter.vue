@@ -34,6 +34,7 @@ async function next() {
     }
 
   photoStore.setFilteredPhotos(result)
+  photoStore.resetRawPhotos()
   sessionStore.step = 'result'
   router.push('/result')
 }

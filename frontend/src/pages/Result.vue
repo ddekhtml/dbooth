@@ -2,6 +2,8 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 import { usePhotoStore } from '../stores/photoStore'
 import { useSessionStore } from '../stores/sessionStore'
+import EmailModal from '../components/EmailModal.vue'
+
 import {
   createCanvas,
   drawFrame,
@@ -9,35 +11,42 @@ import {
   exportCanvas,
   destroyCanvas
 } from '../services/canvas'
+import { useRouter } from 'vue-router'
 
 const sessionStore = useSessionStore()
 const photoStore = usePhotoStore()
 const resultImage = ref(null)
+const router = useRouter()
+const showEmailModal = ref(false)
 
 onMounted(async () => {
   const frame = photoStore.selectedFrame
   const photos = photoStore.filteredPhoto
-
-  if (!frame || !photos.length) return
-
-  // buat canvas
+  if (!frame || !frame.canvas || !frame.slots) {
+    console.error('FRAME INVALID', frame)
+    return
+  }
   createCanvas(frame.canvas.width, frame.canvas.height)
-
-  // gambar foto ke slot
   for (let i = 0; i < frame.slots.length; i++) {
     await drawPhoto(photos[i], frame.slots[i])
   }
-
-  // gambar frame PALING AKHIR
   await drawFrame(frame.image)
-
-  // export
-  resultImage.value = exportCanvas()
+  resultImage.value= exportCanvas('image/png')
+  photoStore.setFinalPhoto(resultImage.value)
+  resultImage.value= exportCanvas('image/jpeg', 0.5)
+  // photoStore.setEmailPhoto(resultImage.value)
+  // console.log(photoStore.finalPhoto.length)
+  // console.log(photoStore.emailPhoto.length)
 })
 
 onUnmounted(() => {
   destroyCanvas()
 })
+
+function next(){
+  sessionStore.step = "done"
+  router.push("/done")
+}
 
 
 </script>
@@ -50,27 +59,31 @@ onUnmounted(() => {
       <img
         v-if="resultImage"
         :src="resultImage"
-        class="w-[300px] object-contain"
+        class="w-75 object-contain"
       />
     </div>
 
     <!-- ACTION -->
     <div class="flex gap-4">
       <button
-        class="px-6 py-2 rounded-full bg-black text-white opacity-50 cursor-not-allowed"
+        @click="showEmailModal = true"
+        class="px-6 py-2 rounded-full bg-black text-white"
       >
-        Email (coming soon)
+        Email
       </button>
 
       <a
-        v-if="resultImage"
-        :href="resultImage"
+        v-if="photoStore.finalPhoto"
+        :href="photoStore.finalPhoto"
         download="photobooth.png"
         class="px-6 py-2 rounded-full border border-black"
       >
         Download
       </a>
     </div>
-
+    <EmailModal
+      v-if="showEmailModal" :photo="resultImage"
+      @close="showEmailModal = false"
+    />
   </div>
 </template>
