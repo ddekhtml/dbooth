@@ -30,8 +30,16 @@ export async function drawPhoto(photo, slot) {
   )
 }
 
-export function exportCanvas(type = 'image/png', quality = 0.92) {
-  return canvas.toDataURL(type, quality)
+export function exportCanvas(type = 'image/png', scale=1,quality = 0.92) {
+  if (scale === 1) {
+    return canvas.toDataURL(type, quality)
+  }
+  const tempCanvas = document.createElement('canvas')
+  tempCanvas.width = canvas.width * scale
+  tempCanvas.height = canvas.height * scale
+  const tempCtx = tempCanvas.getContext('2d')
+  tempCtx.drawImage(canvas, 0, 0, tempCanvas.width, tempCanvas.height)
+  return tempCanvas.toDataURL(type, quality)
 }
 
 export function destroyCanvas() {

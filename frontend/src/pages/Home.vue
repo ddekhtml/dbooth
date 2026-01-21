@@ -2,34 +2,42 @@
 import { useRouter } from 'vue-router'
 import { useSessionStore } from '../stores/sessionStore'
 import { usePhotoStore } from '../stores/photoStore'
-
+import { v4 as uuidv4 } from 'uuid'
+import { clearAllSubmissions, saveSubmission } from '../services/indexesdb'
+import {onMounted} from 'vue'
 const router = useRouter()
-const session = useSessionStore()
 const photo = usePhotoStore()
+const session = useSessionStore()
 
-function goToFrame() {
+async function startEvent() {
+  const setId = uuidv4()
+  await saveSubmission({
+    id : setId, 
+    createdAt : new Date().toISOString(),
+    eventId : session.eventId, 
+    eventName: session.eventName, 
+    eventDate: session.eventDate, 
+    selectedFilter: null,
+    filteredPhoto: null, 
+    finalPhoto: null, 
+    printed : false, 
+    emailed : false, 
+    email : '', 
+  })
+  photo.setCurrentSubmissionId(setId)
   session.setStep('frame')
   router.push('/frame')
 }
 
-function resetAll() {
-  session.resetSession()
-  photo.reset()
-}
+// onMounted(() => {
+//   clearAllSubmissions()
+// })
+
 </script>
 
 <template>
   <div>
     <h1>HOME</h1>
-
-    <h2>Session Store</h2>
-    <pre>{{ session }}</pre>
-
-    <h2>Photo Store</h2>
-    <pre>{{ photo }}</pre>
-
-    <button @click="goToFrame">Go to Frame Select</button>
-    <br>
-    <button @click="resetAll">Reset Session</button>
+    <button @click="startEvent">Start Photobooth</button>
   </div>
 </template>

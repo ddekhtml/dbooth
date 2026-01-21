@@ -1,11 +1,15 @@
 import { openDB } from 'idb'
 
+// const db = await dbPromise --> use database 
+// put 
+// get 
+// getAll 
+// delete 
+
 export const dbPromise = openDB('photoboothDB', 1, {
-  upgrade(db) {
-    // buat object store submissions, keyPath = id
-    const store = db.createObjectStore('submissions', { keyPath: 'id' })
-    // optional index supaya bisa query by eventId
-    store.createIndex('eventId', 'eventId')
+  upgrade(db) { // dipakai hanya pertama kali, versi baru 
+    const store = db.createObjectStore('submissions', { keyPath: 'id' }) // tabel bernama submission degan record punya key unik
+    store.createIndex('eventId', 'eventId') // buat index biar bisa query dengan cepat
   }
 })
 
@@ -30,9 +34,9 @@ export async function getSubmissionById(id) {
 // ambil semua record by eventId
 export async function getSubmissionsByEvent(eventId) {
   const db = await dbPromise
-  const tx = db.transaction('submissions')
-  const store = tx.objectStore('submissions')
-  const index = store.index('eventId')
+  const tx = db.transaction('submissions') // start transaksi 
+  const store = tx.objectStore('submissions') // pilih tabel 
+  const index = store.index('eventId') // pilih index 
   return index.getAll(eventId)
 }
 

@@ -1,28 +1,26 @@
 <script setup>
-import { computed } from 'vue'
+import { ref,computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { filters } from '../config/filters'
 import { usePhotoStore } from '../stores/photoStore'
 import { useSessionStore } from '../stores/sessionStore'
 import { applyFilterToImage } from '../services/filter'
+import { getSubmissionById, updateSubmission } from '../services/indexesdb'
 
 const router = useRouter()
 const photoStore = usePhotoStore()
 const sessionStore = useSessionStore()
-
+const submissions = ref(null)
 const previewPhoto = computed(() =>
   photoStore.rawPhotos.at(-1)
 )
-
 const activeFilter = computed(() =>
   filters.find(f => f.id === photoStore.selectedFilter)
 )
-
 function selectFilter(filter) {
   photoStore.setFilter(filter.id)
 }
-
 async function next() {
   const result = []
     for (const photo of photoStore.rawPhotos) {
@@ -32,15 +30,38 @@ async function next() {
         )
         result.push(filtered)
     }
-
   photoStore.setFilteredPhotos(result)
-  photoStore.resetRawPhotos()
+  await updateSubmission(photoStore.currentSubmissionId, {
+    filteredPhoto: result, 
+    selectedFilter: activeFilter.value 
+  })
   sessionStore.step = 'result'
   router.push('/result')
 }
+onMounted(async() => {
+  if (!photoStore.currentSubmissionId){
+    sessionStore.setStep('home')
+    router.push('/')
+    return 
+  }
+  if (!photoStore.selectedFrame) {
+    sessionStore.setStep('frame')
+    router.push('/frame')
+    return
+  }
+  if (photoStore.selectedFrame.slots.length > photoStore.rawPhotos.length ){
+    sessionStore.setStep('camera')
+    router.push('/camera')
+    return 
+  }
+  // submissions.value= await getSubmissionById(photoStore.currentSubmissionId)
+  // photoStore.resetRawPhotos()
+  // photoStore.setRawPhotos(submission.rawPhotos)
+})
 
 </script>
 <template>
+  <!-- {{ submissions }} -->
   <div class="p-6 space-y-6">
     <h1>FILTER</h1>
 
@@ -85,8 +106,8 @@ async function next() {
 
     <hr />
 
-    <!-- DEBUG -->
+    <!-- DEBUG
     <pre>{{ photoStore }}</pre>
-    <pre>{{ sessionStore }}</pre>
+    <pre>{{ sessionStore }}</pre> -->
   </div>
 </template>

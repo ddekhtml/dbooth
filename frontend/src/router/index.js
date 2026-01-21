@@ -6,6 +6,7 @@ import Camera from '../pages/Camera.vue'
 import Filter from '../pages/Filter.vue'
 import Result from '../pages/Result.vue'
 import Done from '../pages/Done.vue'
+import Admin from '../pages/Admin.vue'
 
 const routes = [
   {
@@ -37,6 +38,11 @@ const routes = [
     path: '/done',
     name: 'done',
     component: Done
+  }, 
+  {
+    path: '/admin',
+    name: 'admin',
+    component: Admin
   }
 ]
 

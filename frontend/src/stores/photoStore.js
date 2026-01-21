@@ -4,35 +4,27 @@ export const usePhotoStore = defineStore('photo', {
   state: () => ({
     selectedFrame: null,
     rawPhotos: [], 
-    selectedFilter: 'normal',
-    finalPhoto: null , 
-    filteredPhoto: [], 
+    selectedFilter: 'normal', 
+    filteredPhoto: [],
+    currentSubmissionId : null, 
   }),
 
   actions: {
     setFrame(frame) {
       this.selectedFrame = frame
       this.rawPhotos = []
-      this.finalPhoto = null
     },
     addRawPhoto(photo) {
       this.rawPhotos.push(photo)
     },
-    resetPhotos() {
-      this.rawPhotos = []
-      this.finalPhoto = null
-    },
     setFilter(filter) {
       this.selectedFilter = filter
-    },
-    setFinalPhoto(photo) {
-      this.finalPhoto = photo
     },
     resetAll() {
       this.selectedFrame = null
       this.rawPhotos = []
       this.selectedFilter = null
-      this.finalPhoto = null
+      this.currentSubmissionId= null
       this.filteredPhoto = []
     }, 
     setFilteredPhotos(photo) {
@@ -40,6 +32,9 @@ export const usePhotoStore = defineStore('photo', {
     }, 
     resetRawPhotos(){
       this.rawPhotos=[]
+    }, 
+    setCurrentSubmissionId(id){
+      this.currentSubmissionId= id 
     }
   }
 })

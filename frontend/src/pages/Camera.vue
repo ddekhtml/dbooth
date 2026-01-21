@@ -7,30 +7,18 @@ import { startCamera, capturePhoto, stopCamera } from '../services/camera'
 
 import { usePhotoStore } from '../stores/photoStore'
 import { useSessionStore } from '../stores/sessionStore'
+import { getSubmissionById, updateSubmission } from '../services/indexesdb'
 
 const router = useRouter()
 const photoStore = usePhotoStore()
 const sessionStore = useSessionStore()
-
+const submissions = ref(null)
 const videoRef = ref(null)
 const countdown = ref(0)
 const isCapturing = ref(false)
-
 const maxPhotos = computed(() =>
   Number(photoStore.selectedFrame?.photoCount || 1)
 )
-
-onMounted(() => {
-  if (!photoStore.selectedFrame) {
-    router.push('/frame')
-    return
-  }
-  startCamera(videoRef.value)
-})
-
-onBeforeUnmount(() => {
-  stopCamera()
-})
 
 async function startCapture() {
   if (isCapturing.value) return
@@ -41,6 +29,12 @@ async function startCapture() {
     const photo = capturePhoto(videoRef.value)
     photoStore.addRawPhoto(photo)
   }
+  const rawPhotosSnapshot = [...photoStore.rawPhotos]
+
+  await updateSubmission(photoStore.currentSubmissionId, {
+    rawPhotos: rawPhotosSnapshot
+  })
+
   sessionStore.step="filter"
   router.push('/filter')
 }
@@ -67,6 +61,24 @@ const aspectRatio = computed(() => {
   return `${activeSlot.value.width} / ${activeSlot.value.height}`
 })
 
+onMounted( async () => {
+  if (!photoStore.currentSubmissionId){
+    sessionStore.setStep('home')
+    router.push('/')
+    return 
+  }
+  if (!photoStore.selectedFrame) {
+    router.push('/frame')
+    return
+  }
+  startCamera(videoRef.value)
+  // submissions.value = await getSubmissionById(photoStore.currentSubmissionId)
+})
+
+onBeforeUnmount(async () => {
+  stopCamera()
+})
+
 
 </script>
 
@@ -75,16 +87,19 @@ const aspectRatio = computed(() => {
 
     <h1>CAMERA</h1>
     <div
-    class="relative mx-auto overflow-hidden rounded-xl bg-black"
-    style="width: 80vw"
-    :style="{ aspectRatio }"
-  >
-    <video
-      ref="videoRef"
-      autoplay
-      playsinline
-      class="w-full h-full object-cover scale-[1.05]"
-    />
+      class="relative mx-auto overflow-hidden rounded-xl bg-black"
+      :style="{
+        width: '80vw',
+        aspectRatio
+      }"
+    >
+      <video
+        ref="videoRef"
+        autoplay
+        playsinline
+        muted
+        class="absolute inset-0 w-full h-full object-cover"
+      />
       <Countdown :value="countdown" />
     </div>
     <button v-if="!isCapturing"
@@ -103,17 +118,16 @@ const aspectRatio = computed(() => {
           :src="photo"
           class="w-48 border"
         />
-        <p>Photo {{ i + 1 }}</p>
       </div>
     </div>
 
     <hr />
-
+<!-- 
     <h2>Photo Store</h2>
     <pre>{{ photoStore }}</pre>
 
     <h2>Session Store</h2>
-    <pre>{{ sessionStore }}</pre>
+    <pre>{{ sessionStore }}</pre> -->
 
   </div>
 </template>

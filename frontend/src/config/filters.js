@@ -10,11 +10,6 @@ export const filters = [
     css: 'grayscale(100%)'
   },
   {
-    id: 'cool',
-    name: 'Cool',
-    css: 'hue-rotate(180deg)'
-  },
-  {
     id: 'bright',
     name: 'Bright',
     css: 'brightness(120%)'
@@ -25,11 +20,6 @@ export const filters = [
     id: 'soft',
     name: 'Soft',
     css: 'brightness(110%) contrast(90%)'
-  },
-  {
-    id: 'contrast',
-    name: 'Contrast',
-    css: 'contrast(130%)'
   },
   
   {
