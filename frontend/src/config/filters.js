@@ -52,6 +52,7 @@ export const filters = [
   id: 'rose',
   name: 'Rose',
   css: 'brightness(105%) sepia(20%) hue-rotate(-10deg)'
-}
+}, 
+
 
 ]

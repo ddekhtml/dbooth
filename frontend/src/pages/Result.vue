@@ -77,8 +77,13 @@ async function generateFinalPhoto() {
   await updateSubmission(photoStore.currentSubmissionId, {
     finalPhoto: resultImage.value
   })
+
+  await sendToPrint(resultImage.value)
 }
 
+function handleEmail(email) {
+  showEmailModal.value = false
+}
 
 onMounted(async () => {
   if (!photoStore.filteredPhoto?.length) {
@@ -90,7 +95,6 @@ onMounted(async () => {
   startCountdown()
   await generateFinalPhoto()
 })
-
 onUnmounted(() => {
   stopPreview()
   clearInterval(countdownTimer)
@@ -102,6 +106,39 @@ function next() {
   sessionStore.step = 'done'
   router.push('/done')
 }
+
+function base64ToBlob(base64) {
+  const byteString = atob(base64.split(',')[1])
+  const mimeString = base64.split(',')[0].split(':')[1].split(';')[0]
+
+  const ab = new ArrayBuffer(byteString.length)
+  const ia = new Uint8Array(ab)
+
+  for (let i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i)
+  }
+
+  return new Blob([ab], { type: mimeString })
+}
+
+async function sendToPrint(base64Image) {
+   try {
+    const blob = base64ToBlob(base64Image)
+    const formData = new FormData()
+    formData.append('file', blob, `${photoStore.currentSubmissionId}.jpg`)
+
+    const data = await fetch('http://localhost:8000/photo', {
+      method: 'POST',
+      body: formData
+    })
+    const json = await data.json()
+    console.log('Print result:', json)
+  } catch (err) {
+    console.error('Error sending to print:', err)
+  }
+}
+
+
 </script>
 <template>
   <div class="relative w-screen h-screen bg-neutral-100 overflow-hidden">
@@ -114,8 +151,7 @@ function next() {
         <img
           v-if="previewPhoto"
           :src="previewPhoto"
-          class="h-full object-contain transition-opacity duration-300"
-        />
+          class="h-full object-contain transition-opacity duration-300"        />
       </div>
     </div>
 
@@ -160,7 +196,6 @@ function next() {
   v-if="showEmailModal"
   @close="showEmailModal = false"
   @submit="handleEmail"
-/>
-
+  />
   </div>
 </template>
