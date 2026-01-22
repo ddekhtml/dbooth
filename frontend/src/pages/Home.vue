@@ -11,9 +11,10 @@ const session = useSessionStore()
 
 async function startEvent() {
   const setId = uuidv4()
+  const time = new Date().toISOString()
   await saveSubmission({
     id : setId, 
-    createdAt : new Date().toISOString(),
+    createdAt : time,
     eventId : session.eventId, 
     eventName: session.eventName, 
     eventDate: session.eventDate, 
@@ -25,6 +26,7 @@ async function startEvent() {
     email : '', 
   })
   photo.setCurrentSubmissionId(setId)
+  photo.setCreated(time)
   session.setStep('frame')
   router.push('/frame')
 }

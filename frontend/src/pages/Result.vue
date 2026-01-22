@@ -5,7 +5,7 @@ import { usePhotoStore } from '../stores/photoStore'
 import { useSessionStore } from '../stores/sessionStore'
 import EmailModal from '../components/EmailModal.vue'
 import QrDisplay from '../components/QrDisplay.vue'
-
+import { base64ToBlob } from '../services/blob'
 import {
   createCanvas,
   drawFrame,
@@ -15,6 +15,8 @@ import {
 } from '../services/canvas'
 
 import { updateSubmission } from '../services/indexesdb'
+import { insertPhotoRecord } from '../services/upload'
+import { uploadBlob, uploadFilteredPhotos } from '../services/uploadblob'
 
 const photoStore = usePhotoStore()
 const sessionStore = useSessionStore()
@@ -77,7 +79,17 @@ async function generateFinalPhoto() {
   await updateSubmission(photoStore.currentSubmissionId, {
     finalPhoto: resultImage.value
   })
+  const filteredUrls = await uploadFilteredPhotos(photoStore.filteredPhoto)
 
+  const finalUrl = await uploadBlob(base64ToBlob(resultImage.value))
+  await insertPhotoRecord({
+    id: photoStore.currentSubmissionId, 
+    created_at:photoStore.created,
+    event_id: sessionStore.eventId,
+    event_name: sessionStore.eventName,
+    filtered_photo: filteredUrls,
+    final_photo: finalUrl
+  })
   await sendToPrint(resultImage.value)
 }
 
@@ -105,20 +117,6 @@ function next() {
   stopPreview()
   sessionStore.step = 'done'
   router.push('/done')
-}
-
-function base64ToBlob(base64) {
-  const byteString = atob(base64.split(',')[1])
-  const mimeString = base64.split(',')[0].split(':')[1].split(';')[0]
-
-  const ab = new ArrayBuffer(byteString.length)
-  const ia = new Uint8Array(ab)
-
-  for (let i = 0; i < byteString.length; i++) {
-    ia[i] = byteString.charCodeAt(i)
-  }
-
-  return new Blob([ab], { type: mimeString })
 }
 
 async function sendToPrint(base64Image) {
@@ -168,7 +166,8 @@ async function sendToPrint(base64Image) {
 
       <QrDisplay
         v-if="showQR"
-        :value="url"
+        :value="photoStore.currentSubmissionId"
+
       />
 
       <div class="flex flex-col items-center gap-2">
@@ -193,9 +192,9 @@ async function sendToPrint(base64Image) {
     </div>
 
     <EmailModal
-  v-if="showEmailModal"
-  @close="showEmailModal = false"
-  @submit="handleEmail"
+      v-if="showEmailModal"
+      @close="showEmailModal = false"
+      @submit="handleEmail"
   />
   </div>
 </template>

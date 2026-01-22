@@ -12,7 +12,7 @@ defineProps({
 <template>
   <div class="bg-white p-4 rounded-xl shadow">
     <QrcodeVue
-      :value="value"
+      :value="`https://dbooth.netlify.app/${value}`"
       :size="180"
       level="H"
     />

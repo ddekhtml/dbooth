@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { setTransitionHooks } from 'vue'
 
 export const usePhotoStore = defineStore('photo', {
   state: () => ({
@@ -7,6 +8,7 @@ export const usePhotoStore = defineStore('photo', {
     selectedFilter: 'normal', 
     filteredPhoto: [],
     currentSubmissionId : null, 
+    created: null,
   }),
 
   actions: {
@@ -26,6 +28,7 @@ export const usePhotoStore = defineStore('photo', {
       this.selectedFilter = null
       this.currentSubmissionId= null
       this.filteredPhoto = []
+      this.created= null 
     }, 
     setFilteredPhotos(photo) {
       this.filteredPhoto = photo
@@ -35,6 +38,9 @@ export const usePhotoStore = defineStore('photo', {
     }, 
     setCurrentSubmissionId(id){
       this.currentSubmissionId= id 
+    },
+    setCreated(param){
+      this.created= param 
     }
   }
 })
