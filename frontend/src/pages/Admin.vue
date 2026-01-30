@@ -2,16 +2,23 @@
 import { ref, onMounted } from 'vue'
 import { getAllSubmissions } from '../services/indexesdb'
 import { useSessionStore } from '../stores/sessionStore'
+import { useRouter } from 'vue-router'
 
 const datas = ref([])
 const session = useSessionStore()
 onMounted(async () => {
   datas.value = await getAllSubmissions()
 })
+const router = useRouter()
+
+function toHome(){
+    router.push('/')
+}
 
 </script>
 
 <template>
+    <i class="pi pi-times text-maroon text-xl m-2" @click="toHome"></i>
   <div class="font-sunday text-center text-6xl text-maroon mt-8">
     {{ session.eventName }}
   </div>

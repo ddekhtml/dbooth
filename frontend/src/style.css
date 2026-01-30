@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+
 @font-face {
   font-family: "Sunday"; 
   src: url("./assets/fonts/Sunday-Regular.woff") format("woff");

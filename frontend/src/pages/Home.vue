@@ -60,8 +60,8 @@ function toAdmin(){
       </button>
     </p>
 
-    <div class="mt-10 self-center bg-maroon font-serif text-bg text-4xl px-20 pt-4 pb-5 rounded-full">
-      <button @click="startEvent">Mulai</button>
+    <div class="mt-10 self-center bg-maroon font-serif text-bg text-4xl px-20 pt-4 pb-5 rounded-full" @click="startEvent">
+     Mulai
     </div>
 
     <!-- photostrip -->
